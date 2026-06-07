@@ -1453,7 +1453,6 @@ async function signOut() {
 
 // ── DASHBOARD ──
 async function loadDashboard() {
-  // GymShark build - go straight to pitch
   const {data,error}=await sb.from('pitches').select('*').eq('share_token','9c803c662ffc2302').single();
   if (error||!data){showToast('Could not load pitch','error');return;}
   await openPitch(data.id);
@@ -3767,46 +3766,27 @@ function savePdfPairsToStorage() {
 }
 
 function initPdfPairs() {
-  var allProds = (_pdfCollection==='outdoor' ? state.products : state.activeProducts) || [];
-  // Filter hidden products
-  allProds = allProds.filter(function(p){ return !p.hidden; });
-  // Sort: outdoor = base layer first, then mid layer; active = apparel first, then accessories
-  var prods;
-  if (_pdfCollection==='outdoor') {
-    var base = allProds.filter(function(p){ return p.layer==='base'||p.layer==='Base Layer'; });
-    var mid = allProds.filter(function(p){ return p.layer==='mid'||p.layer==='Mid Layer'; });
-    var other = allProds.filter(function(p){ return p.layer!=='base'&&p.layer!=='Base Layer'&&p.layer!=='mid'&&p.layer!=='Mid Layer'; });
-    prods = base.concat(mid).concat(other);
-  } else {
-    var apparel = allProds.filter(function(p){ return p.category==='warm'; });
-    var accessories = allProds.filter(function(p){ return p.category==='air'; });
-    var other = allProds.filter(function(p){ return p.category!=='warm'&&p.category!=='air'; });
-    prods = apparel.concat(accessories).concat(other);
-  }
-  // Restore saved layout if it exists, otherwise build fresh in correct order
+  var prods = (_pdfCollection==='outdoor' ? state.products : state.activeProducts) || [];
   var saved = null;
   try { saved = JSON.parse(localStorage.getItem('pdfPairs_'+_pdfCollection)); } catch(e) {}
   if (saved && Array.isArray(saved) && saved.length) {
     var validIds = {};
-    allProds.forEach(function(p){ validIds[p.id]=true; });
+    prods.forEach(function(p){ validIds[p.id]=true; });
     _pdfPairs = saved.map(function(pair){
       return [pair[0] && validIds[pair[0]] ? pair[0] : null, pair[1] && validIds[pair[1]] ? pair[1] : null];
     }).filter(function(pair){ return pair[0]!==null || pair[1]!==null; });
-  } else {
-    // No saved layout — build fresh, pairing within groups only
-    _pdfPairs = [];
-    function pairGroup(group) {
-      for (var i=0; i<group.length; i+=2) {
-        _pdfPairs.push([group[i] ? group[i].id : null, group[i+1] ? group[i+1].id : null]);
+    if (!_pdfPairs.length) {
+      _pdfPairs = [];
+      for (var i=0; i<prods.length; i+=2) {
+        _pdfPairs.push([prods[i] ? prods[i].id : null, prods[i+1] ? prods[i+1].id : null]);
       }
     }
-    if (_pdfCollection==='outdoor') {
-      pairGroup(base); pairGroup(mid); pairGroup(other);
-    } else {
-      pairGroup(apparel); pairGroup(accessories); pairGroup(other);
+  } else {
+    _pdfPairs = [];
+    for (var i=0; i<prods.length; i+=2) {
+      _pdfPairs.push([prods[i] ? prods[i].id : null, prods[i+1] ? prods[i+1].id : null]);
     }
   }
-  savePdfPairsToStorage();
   renderPdfPairs();
 }
 
@@ -3870,7 +3850,7 @@ function addPdfPair() { _pdfPairs.push([null, null]); savePdfPairsToStorage(); r
 function removePdfPair(pi) { _pdfPairs.splice(pi, 1); savePdfPairsToStorage(); renderPdfPairs(); }
 
 function buildPdfPageHTML(pair) {
-  var prods = ((_pdfCollection==='outdoor' ? state.products : state.activeProducts) || []).filter(function(p){ return !p.hidden; });
+  var prods = (_pdfCollection==='outdoor' ? state.products : state.activeProducts) || [];
   var p1 = pair[0] ? prods.find(function(p){ return p.id===pair[0]; }) : null;
   var p2 = pair[1] ? prods.find(function(p){ return p.id===pair[1]; }) : null;
   var isSolo = !p2;
@@ -3959,14 +3939,14 @@ function buildPdfPageHTML(pair) {
     '<div style="flex:1;display:flex;flex-direction:row;overflow:hidden;min-height:0">'+
 
       // Images + names (left ~65%)
-      '<div style="flex:1.5;display:flex;flex-direction:row;border-right:0.3mm solid #eee;overflow:hidden">'+
+      '<div style="flex:1.9;display:flex;flex-direction:row;border-right:0.3mm solid #eee;overflow:hidden">'+
 
         '<div style="flex:1;display:flex;flex-direction:column;border-right:0.3mm solid #eee;overflow:hidden">'+
           '<div style="flex:1;overflow:hidden">'+
             '<img src="'+(p1.img||'')+'" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"/>'+
           '</div>'+
           '<div style="padding:3mm 4mm 3mm;flex-shrink:0;text-align:center">'+
-            '<div style="font-family:Cormorant Garamond,serif;font-size:5mm;font-weight:300;color:#1C1C1A;line-height:1.2">'+(p1.name||'')+'</div>'+
+            '<div style="font-family:Cormorant Garamond,serif;font-size:6mm;font-weight:300;color:#1C1C1A;line-height:1.2">'+(p1.name||'')+'</div>'+
             styleNosPDF(p1)+
           '</div>'+
         '</div>'+
@@ -3976,7 +3956,7 @@ function buildPdfPageHTML(pair) {
             '<img src="'+(p2.img||'')+'" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"/>'+
           '</div>'+
           '<div style="padding:3mm 4mm 3mm;flex-shrink:0;text-align:center">'+
-            '<div style="font-family:Cormorant Garamond,serif;font-size:5mm;font-weight:300;color:#1C1C1A;line-height:1.2">'+(p2.name||'')+'</div>'+
+            '<div style="font-family:Cormorant Garamond,serif;font-size:6mm;font-weight:300;color:#1C1C1A;line-height:1.2">'+(p2.name||'')+'</div>'+
             styleNosPDF(p2)+
           '</div>'+
         '</div>'+
