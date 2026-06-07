@@ -1453,11 +1453,10 @@ async function signOut() {
 
 // ── DASHBOARD ──
 async function loadDashboard() {
-  g('dash-email').textContent=currentUser.email;
-  showScreen('dashboard');
-  const {data,error}=await sb.from('pitches').select('id,user_id,title,client,template,palette,products,share_token,updated_at').eq('share_token','9c803c662ffc2302').single();
-  if (error){showToast('Could not load pitches','error');return;}
-  renderPitchGrid(data||[]);
+  // GymShark build - go straight to pitch
+  const {data,error}=await sb.from('pitches').select('*').eq('share_token','9c803c662ffc2302').single();
+  if (error||!data){showToast('Could not load pitch','error');return;}
+  await openPitch(data.id);
 }
 
 function renderPitchGrid(pitches) {
