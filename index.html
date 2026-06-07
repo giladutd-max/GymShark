@@ -1088,7 +1088,7 @@ let state = {
   activeOpening: '', activeOpeningImg: '', activeOpeningVideo: '',
   activeVision: '', activeVisionQuote: '', activeVisionVideo: '',
   activeTechDefaultImg: '', activeTechDefaultVideo: '', activeTechItems: [],
-  activeCatWarmName: 'Apparel', activeCatAirName: 'Accessories',
+  activeCatWarmName: 'Women', activeCatAirName: 'Men',
   activeCatWarmVideo: '', activeCatAirVideo: '',
   activeSellingPoints: [],
   activeProducts: [],
@@ -1648,7 +1648,7 @@ async function openPitch(id) {
   state.activeOpening=data.active_opening||''; state.activeOpeningImg=data.active_opening_img||''; state.activeOpeningVideo=data.active_opening_video||'';
   state.activeVision=data.active_vision||''; state.activeVisionQuote=data.active_vision_quote||''; state.activeVisionVideo=data.active_vision_video||'';
   state.activeTechDefaultImg=data.active_tech_default_img||''; state.activeTechDefaultVideo=data.active_tech_default_video||''; state.activeTechItems=data.active_tech_items||[];
-  state.activeCatWarmName=data.active_cat_warm_name||'Apparel'; state.activeCatAirName=data.active_cat_air_name||'Accessories';
+  state.activeCatWarmName=data.active_cat_warm_name||'Women'; state.activeCatAirName=data.active_cat_air_name||'Men';
   state.activeCatWarmVideo=data.active_cat_warm_video||''; state.activeCatAirVideo=data.active_cat_air_video||'';
   state.activeSellingPoints=data.active_selling_points||[]; state.activeProducts=data.active_products||[];
   state._activeProductsLoaded=true;
@@ -1971,8 +1971,8 @@ async function savePitch() {
     active_tech_default_img:state.activeTechDefaultImg||'',
     active_tech_default_video:state.activeTechDefaultVideo||'',
     active_tech_items:state.activeTechItems||[],
-    active_cat_warm_name:g('active-cat-warm-name')?.value||state.activeCatWarmName||'Apparel',
-    active_cat_air_name:g('active-cat-air-name')?.value||state.activeCatAirName||'Accessories',
+    active_cat_warm_name:g('active-cat-warm-name')?.value||state.activeCatWarmName||'Women',
+    active_cat_air_name:g('active-cat-air-name')?.value||state.activeCatAirName||'Men',
     active_cat_warm_video:state.activeCatWarmVideo||'',
     active_cat_air_video:state.activeCatAirVideo||'',
     active_selling_points:state.activeSellingPoints||[],
@@ -3433,7 +3433,7 @@ async function loadPresentationView(token) {
   state.activeOpening=data.active_opening||''; state.activeOpeningImg=data.active_opening_img||''; state.activeOpeningVideo=data.active_opening_video||'';
   state.activeVision=data.active_vision||''; state.activeVisionQuote=data.active_vision_quote||''; state.activeVisionVideo=data.active_vision_video||'';
   state.activeTechDefaultImg=data.active_tech_default_img||''; state.activeTechDefaultVideo=data.active_tech_default_video||''; state.activeTechItems=data.active_tech_items||[];
-  state.activeCatWarmName=data.active_cat_warm_name||'Apparel'; state.activeCatAirName=data.active_cat_air_name||'Accessories';
+  state.activeCatWarmName=data.active_cat_warm_name||'Women'; state.activeCatAirName=data.active_cat_air_name||'Men';
   state.activeCatWarmVideo=data.active_cat_warm_video||''; state.activeCatAirVideo=data.active_cat_air_video||'';
   state.activeSellingPoints=data.active_selling_points||[]; state.activeProducts=data.active_products||[];
   state._activeProductsLoaded=true;
