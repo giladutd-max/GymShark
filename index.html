@@ -3184,7 +3184,7 @@ function updatePreview() {
               +'<div style="width:20px;height:1px;background:'+warmAcc+';margin-bottom:12px;opacity:0.8"></div>'
               +(_activeMode?'':'<div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:'+eyebrowColor+';margin-bottom:14px">Thermal Collection</div>')
               +'<div style="font-family:Cormorant Garamond,serif;font-size:52px;font-weight:300;color:'+textOnSplit+';line-height:1.0;margin-bottom:16px">'+(state.catWarmName||'Base Layer').replace(' ','<br>')+'</div>'
-              +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+warmProds.length+' styles</div>'
+              +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+warmProds.filter(function(p){return !p.hidden;}).length+' styles</div>'
               +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+warmAcc+'">Explore →</div>'
             +'</div>'
           +'</div>'
@@ -3196,7 +3196,7 @@ function updatePreview() {
               +'<div style="width:20px;height:1px;background:'+airAcc+';margin-bottom:12px;opacity:0.8"></div>'
               +(_activeMode?'':'<div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:'+eyebrowColor+';margin-bottom:14px">Thermal Collection</div>')
               +'<div style="font-family:Cormorant Garamond,serif;font-size:52px;font-weight:300;color:'+textOnSplit+';line-height:1.0;margin-bottom:16px">'+(state.catAirName||'Mid Layer').replace(' ','<br>')+'</div>'
-              +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+airProds.length+' styles</div>'
+              +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+airProds.filter(function(p){return !p.hidden;}).length+' styles</div>'
               +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+airAcc+'">Explore →</div>'
             +'</div>'
           +'</div>'
