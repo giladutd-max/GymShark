@@ -3179,32 +3179,7 @@ function updatePreview() {
       const splitHTML=getOpeningScreen()+getNavCards(null)+getHero()
         +'<div id="section-anchor"></div>'
         +'<div id="cat-split" style="display:grid;grid-template-columns:1fr 1fr;min-height:95vh">'
-          +(_activeMode
-            ? (+'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'air\')" class="cat-panel" style="background:'+airBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;position:relative;overflow:hidden;transition:opacity 0.8s ease 0.15s,transform 0.8s ease 0.15s;opacity:0;transform:translateY(40px)">'
-            +(airVid?'<video autoplay muted playsinline preload="auto" class="cat-vid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.5s ease" oncanplay="this.style.opacity='+vidOpacity+'"><source src="'+airVid+'" type="video/mp4"></video>':'')
-            +'<div style="position:absolute;inset:0;background:'+textGradient+';pointer-events:none"></div>'
-            +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+airAcc+'"></div>'
-            +'<div style="position:relative;z-index:1;transition:transform 0.4s ease" class="cat-text">'
-              +'<div style="width:20px;height:1px;background:'+airAcc+';margin-bottom:12px;opacity:0.8"></div>'
-              +(_activeMode?'':'<div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:'+eyebrowColor+';margin-bottom:14px">Thermal Collection</div>')
-              +'<div style="font-family:Cormorant Garamond,serif;font-size:52px;font-weight:300;color:'+textOnSplit+';line-height:1.0;margin-bottom:16px">'+(state.catAirName||'Mid Layer').replace(' ','<br>')+'</div>'
-              +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+airProds.filter(function(p){return !p.hidden;}).length+' styles</div>'
-              +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+airAcc+'">Explore →</div>'
-            +'</div>'
-          +'</div>'
-            +'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'warm\')" class="cat-panel" style="background:'+warmBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;position:relative;overflow:hidden;transition:opacity 0.8s ease,transform 0.8s ease;opacity:0;transform:translateY(40px)">'
-            +(warmVid?'<video autoplay muted playsinline preload="auto" class="cat-vid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.5s ease" oncanplay="this.style.opacity='+vidOpacity+'"><source src="'+warmVid+'" type="video/mp4"></video>':'')
-            +'<div style="position:absolute;inset:0;background:'+textGradient+';pointer-events:none"></div>'
-            +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+warmAcc+'"></div>'
-            +'<div style="position:relative;z-index:1;transition:transform 0.4s ease" class="cat-text">'
-              +'<div style="width:20px;height:1px;background:'+warmAcc+';margin-bottom:12px;opacity:0.8"></div>'
-              +(_activeMode?'':'<div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:'+eyebrowColor+';margin-bottom:14px">Thermal Collection</div>')
-              +'<div style="font-family:Cormorant Garamond,serif;font-size:52px;font-weight:300;color:'+textOnSplit+';line-height:1.0;margin-bottom:16px">'+(state.catWarmName||'Base Layer').replace(' ','<br>')+'</div>'
-              +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+warmProds.filter(function(p){return !p.hidden;}).length+' styles</div>'
-              +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+warmAcc+'">Explore →</div>'
-            +'</div>'
-          +'</div>')
-            : (+'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'warm\')" class="cat-panel" style="background:'+warmBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;border-right:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden;transition:opacity 0.8s ease,transform 0.8s ease;opacity:0;transform:translateY(40px)">'
+          +'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'warm\')" class="cat-panel" style="background:'+warmBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;border-right:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden;transition:opacity 0.8s ease,transform 0.8s ease;opacity:0;transform:translateY(40px)">'
             +(warmVid?'<video autoplay muted playsinline preload="auto" class="cat-vid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.5s ease" oncanplay="this.style.opacity='+vidOpacity+'"><source src="'+warmVid+'" type="video/mp4"></video>':'')
             +'<div style="position:absolute;inset:0;background:'+textGradient+';pointer-events:none"></div>'
             +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+warmAcc+'"></div>'
@@ -3216,7 +3191,7 @@ function updatePreview() {
               +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+warmAcc+'">Explore →</div>'
             +'</div>'
           +'</div>'
-            +'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'air\')" class="cat-panel" style="background:'+airBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;position:relative;overflow:hidden;transition:opacity 0.8s ease 0.15s,transform 0.8s ease 0.15s;opacity:0;transform:translateY(40px)">'
+          +'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'air\')" class="cat-panel" style="background:'+airBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;position:relative;overflow:hidden;transition:opacity 0.8s ease 0.15s,transform 0.8s ease 0.15s;opacity:0;transform:translateY(40px)">'
             +(airVid?'<video autoplay muted playsinline preload="auto" class="cat-vid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.5s ease" oncanplay="this.style.opacity='+vidOpacity+'"><source src="'+airVid+'" type="video/mp4"></video>':'')
             +'<div style="position:absolute;inset:0;background:'+textGradient+';pointer-events:none"></div>'
             +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+airAcc+'"></div>'
@@ -3227,7 +3202,7 @@ function updatePreview() {
               +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+airProds.filter(function(p){return !p.hidden;}).length+' styles</div>'
               +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+airAcc+'">Explore →</div>'
             +'</div>'
-          +'</div>'))
+          +'</div>'
         +'</div>'
         +'<div id="cat-warm" style="display:none;background:'+warmBg+'"></div>'
         +'<div id="cat-air" style="display:none;background:'+airBg+'"></div>';
