@@ -2508,7 +2508,6 @@ function editActiveProduct(id) {
   else{g('modal-extra-imgs').style.display='block';}
   g('modal-save-btn').textContent='Update Product';
   g('modal-save-btn').onclick=()=>updateActiveProduct(id);
-  g('modal-overlay')._editingId=id; window._pendingPdfImgs=null;
   g('modal-overlay').classList.add('open');
   const hp=g('modal-hover-preview');
   if(hp) hp.innerHTML=p.hoverImg?'<img src="'+p.hoverImg+'" style="width:100%;height:100%;object-fit:cover" />'+'<div id="modal-hover-replace" style="display:flex;position:absolute;inset:0;background:rgba(0,0,0,0.3);align-items:center;justify-content:center;color:white;font-size:11px;text-transform:uppercase">Click to replace</div>':'<span style="font-size:11px;color:var(--mid)">Click to upload hover image</span>';
@@ -2607,12 +2606,10 @@ function editProduct(id) {
       const thumb=document.createElement('div');
       thumb.style.cssText='position:relative;width:48px;height:48px;border-radius:2px;overflow:hidden;flex-shrink:0';
       thumb.dataset.src=src;
-      const isPdf = (p.pdfImgs||[]).includes(src);
       thumb.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:cover" />`
         +`<div style="position:absolute;inset:0;background:rgba(0,0,0,0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:2px" class="thumb-overlay"></div>`
         +`<button onclick="removeExistingExtra(this)" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.65);color:white;border:none;width:16px;height:16px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">×</button>`
-        +`<div onclick="replaceExtraImg(this,${i})" style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);color:white;font-size:8px;text-align:center;padding:2px;cursor:pointer;letter-spacing:0.05em;font-family:DM Sans,sans-serif">Replace</div>`
-        +`<button onclick="togglePdfImg(this,'${src}')" title="Use in PDF" style="position:absolute;bottom:16px;left:0;right:0;background:${isPdf?'rgba(196,168,130,0.9)':'rgba(0,0,0,0.5)'};color:white;border:none;font-size:8px;padding:2px;cursor:pointer;font-family:DM Sans,sans-serif;letter-spacing:0.05em">${isPdf?'PDF ✓':'PDF'}</button>`;
+        +`<div onclick="replaceExtraImg(this,${i})" style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);color:white;font-size:8px;text-align:center;padding:2px;cursor:pointer;letter-spacing:0.05em;font-family:DM Sans,sans-serif">Replace</div>`;
       g('modal-extra-thumbs').appendChild(thumb);
     });
   } else {
@@ -2620,7 +2617,6 @@ function editProduct(id) {
   }
   g('modal-save-btn').textContent='Update Product';
   g('modal-save-btn').onclick=()=>updateProduct(id);
-  g('modal-overlay')._editingId=id; window._pendingPdfImgs=null;
   g('modal-overlay').classList.add('open');
   // show existing hover image
   const hp=g('modal-hover-preview');
@@ -2654,8 +2650,7 @@ async function updateProduct(id) {
   } else if (pendingHoverFile) {
     hoverImgUrl = await uploadImageToStorage(pendingHoverFile) || hoverImgUrl;
   }
-  state.products[idx]={...state.products[idx], name, fabric:g('modal-fabric').value.trim(), machine:g('modal-machine')?.value.trim()||'', desc:g('modal-desc').value.trim(), special:g('modal-special')?.value.trim()||'', video:g('modal-video')?.value.trim()||'', img:imgUrl, extraImgs:[...existingExtras,...newExtras], hoverImg:hoverImgUrl, warmth:pendingWarmthRating, dry:pendingDryRating, breath:pendingBreathRating, techs:[...pendingTechs], category:g('modal-category')?.value||'', layer:g('modal-layer')?.value||'', styleNo:g('modal-style-no')?.value.trim()||'', styleTop:g('modal-style-top')?.value.trim()||'', styleBottom:g('modal-style-bottom')?.value.trim()||'', styleJacket:g('modal-style-jacket')?.value.trim()||'', styleShirt:g('modal-style-shirt')?.value.trim()||'', styleHalfZip:g('modal-style-halfzip')?.value.trim()||'', pdfImgs:window._pendingPdfImgs||state.products[idx].pdfImgs||[]};
-  window._pendingPdfImgs=null;
+  state.products[idx]={...state.products[idx], name, fabric:g('modal-fabric').value.trim(), machine:g('modal-machine')?.value.trim()||'', desc:g('modal-desc').value.trim(), special:g('modal-special')?.value.trim()||'', video:g('modal-video')?.value.trim()||'', img:imgUrl, extraImgs:[...existingExtras,...newExtras], hoverImg:hoverImgUrl, warmth:pendingWarmthRating, dry:pendingDryRating, breath:pendingBreathRating, techs:[...pendingTechs], category:g('modal-category')?.value||'', layer:g('modal-layer')?.value||'', styleNo:g('modal-style-no')?.value.trim()||'', styleTop:g('modal-style-top')?.value.trim()||'', styleBottom:g('modal-style-bottom')?.value.trim()||'', styleJacket:g('modal-style-jacket')?.value.trim()||'', styleShirt:g('modal-style-shirt')?.value.trim()||'', styleHalfZip:g('modal-style-halfzip')?.value.trim()||''};
   g('modal-save-btn').textContent='Add Product'; g('modal-save-btn').disabled=false;
   g('modal-save-btn').onclick=saveProduct;
   closeModal();
@@ -3184,32 +3179,7 @@ function updatePreview() {
       const splitHTML=getOpeningScreen()+getNavCards(null)+getHero()
         +'<div id="section-anchor"></div>'
         +'<div id="cat-split" style="display:grid;grid-template-columns:1fr 1fr;min-height:95vh">'
-          +(_activeMode
-            ? (+'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'air\')" class="cat-panel" style="background:'+airBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;position:relative;overflow:hidden;transition:opacity 0.8s ease 0.15s,transform 0.8s ease 0.15s;opacity:0;transform:translateY(40px)">'
-            +(airVid?'<video autoplay muted playsinline preload="auto" class="cat-vid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.5s ease" oncanplay="this.style.opacity='+vidOpacity+'"><source src="'+airVid+'" type="video/mp4"></video>':'')
-            +'<div style="position:absolute;inset:0;background:'+textGradient+';pointer-events:none"></div>'
-            +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+airAcc+'"></div>'
-            +'<div style="position:relative;z-index:1;transition:transform 0.4s ease" class="cat-text">'
-              +'<div style="width:20px;height:1px;background:'+airAcc+';margin-bottom:12px;opacity:0.8"></div>'
-              +(_activeMode?'':'<div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:'+eyebrowColor+';margin-bottom:14px">Thermal Collection</div>')
-              +'<div style="font-family:Cormorant Garamond,serif;font-size:52px;font-weight:300;color:'+textOnSplit+';line-height:1.0;margin-bottom:16px">'+(state.catAirName||'Mid Layer').replace(' ','<br>')+'</div>'
-              +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+airProds.filter(function(p){return !p.hidden;}).length+' styles</div>'
-              +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+airAcc+'">Explore →</div>'
-            +'</div>'
-          +'</div>'
-            +'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'warm\')" class="cat-panel" style="background:'+warmBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;position:relative;overflow:hidden;transition:opacity 0.8s ease,transform 0.8s ease;opacity:0;transform:translateY(40px)">'
-            +(warmVid?'<video autoplay muted playsinline preload="auto" class="cat-vid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.5s ease" oncanplay="this.style.opacity='+vidOpacity+'"><source src="'+warmVid+'" type="video/mp4"></video>':'')
-            +'<div style="position:absolute;inset:0;background:'+textGradient+';pointer-events:none"></div>'
-            +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+warmAcc+'"></div>'
-            +'<div style="position:relative;z-index:1;transition:transform 0.4s ease" class="cat-text">'
-              +'<div style="width:20px;height:1px;background:'+warmAcc+';margin-bottom:12px;opacity:0.8"></div>'
-              +(_activeMode?'':'<div style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:'+eyebrowColor+';margin-bottom:14px">Thermal Collection</div>')
-              +'<div style="font-family:Cormorant Garamond,serif;font-size:52px;font-weight:300;color:'+textOnSplit+';line-height:1.0;margin-bottom:16px">'+(state.catWarmName||'Base Layer').replace(' ','<br>')+'</div>'
-              +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+warmProds.filter(function(p){return !p.hidden;}).length+' styles</div>'
-              +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+warmAcc+'">Explore →</div>'
-            +'</div>'
-          +'</div>')
-            : (+'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'warm\')" class="cat-panel" style="background:'+warmBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;border-right:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden;transition:opacity 0.8s ease,transform 0.8s ease;opacity:0;transform:translateY(40px)">'
+          +'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'warm\')" class="cat-panel" style="background:'+warmBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;border-right:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden;transition:opacity 0.8s ease,transform 0.8s ease;opacity:0;transform:translateY(40px)">'
             +(warmVid?'<video autoplay muted playsinline preload="auto" class="cat-vid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.5s ease" oncanplay="this.style.opacity='+vidOpacity+'"><source src="'+warmVid+'" type="video/mp4"></video>':'')
             +'<div style="position:absolute;inset:0;background:'+textGradient+';pointer-events:none"></div>'
             +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+warmAcc+'"></div>'
@@ -3221,7 +3191,7 @@ function updatePreview() {
               +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+warmAcc+'">Explore →</div>'
             +'</div>'
           +'</div>'
-            +'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'air\')" class="cat-panel" style="background:'+airBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;position:relative;overflow:hidden;transition:opacity 0.8s ease 0.15s,transform 0.8s ease 0.15s;opacity:0;transform:translateY(40px)">'
+          +'<div onclick="navPush(function(){showCat(\'split\')});showCat(\'air\')" class="cat-panel" style="background:'+airBg+';display:flex;flex-direction:column;justify-content:flex-end;padding:48px;cursor:pointer;position:relative;overflow:hidden;transition:opacity 0.8s ease 0.15s,transform 0.8s ease 0.15s;opacity:0;transform:translateY(40px)">'
             +(airVid?'<video autoplay muted playsinline preload="auto" class="cat-vid" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.5s ease" oncanplay="this.style.opacity='+vidOpacity+'"><source src="'+airVid+'" type="video/mp4"></video>':'')
             +'<div style="position:absolute;inset:0;background:'+textGradient+';pointer-events:none"></div>'
             +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+airAcc+'"></div>'
@@ -3232,7 +3202,7 @@ function updatePreview() {
               +'<div style="font-size:11px;color:'+subOnSplit+';margin-bottom:20px">'+airProds.filter(function(p){return !p.hidden;}).length+' styles</div>'
               +'<div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:'+airAcc+'">Explore →</div>'
             +'</div>'
-          +'</div>'))
+          +'</div>'
         +'</div>'
         +'<div id="cat-warm" style="display:none;background:'+warmBg+'"></div>'
         +'<div id="cat-air" style="display:none;background:'+airBg+'"></div>';
@@ -3951,7 +3921,7 @@ function buildPdfPageHTML(pair) {
   }
 
   if (isSolo && p1) {
-    var allImgs=(p1.pdfImgs&&p1.pdfImgs.length)?[p1.img,p1.pdfImgs[0]].filter(Boolean):[p1.img].concat(p1.extraImgs||[]).filter(Boolean).slice(0,2);
+    var allImgs=[p1.img].concat(p1.extraImgs||[]).filter(Boolean).slice(0,2);
     var imgGrid=allImgs.length===1
       ?'<div style="height:100%;background:#f5f2ee"><img src="'+allImgs[0]+'" style="width:100%;height:100%;object-fit:contain;object-position:center;display:block"/></div>'
       :'<div style="display:flex;height:100%;align-items:stretch;width:100%">'+allImgs.map(function(src,i){return '<div style="flex:1;min-width:0;background:#f5f2ee'+(i<allImgs.length-1?';border-right:1px solid #eee':'')+';overflow:hidden"><img src="'+src+'" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block"/></div>';}).join('')+'</div>';
