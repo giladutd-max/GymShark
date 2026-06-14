@@ -2189,6 +2189,9 @@ function openModal() {
   if(g('modal-style-no')) g('modal-style-no').value='';
   if(g('modal-style-top')) g('modal-style-top').value='';
   if(g('modal-style-bottom')) g('modal-style-bottom').value='';
+  if(g('modal-style-jacket')) g('modal-style-jacket').value='';
+  if(g('modal-style-shirt')) g('modal-style-shirt').value='';
+  if(g('modal-style-halfzip')) g('modal-style-halfzip').value='';
   if(g('modal-special')) g('modal-special').value='';
   if(g('modal-video')) g('modal-video').value='';
   pendingTechs=[];
@@ -2520,6 +2523,9 @@ function editActiveProduct(id) {
   if(g('modal-style-no')) g('modal-style-no').value=p.styleNo||'';
   if(g('modal-style-top')) g('modal-style-top').value=p.styleTop||'';
   if(g('modal-style-bottom')) g('modal-style-bottom').value=p.styleBottom||'';
+  if(g('modal-style-jacket')) g('modal-style-jacket').value=p.styleJacket||'';
+  if(g('modal-style-shirt')) g('modal-style-shirt').value=p.styleShirt||'';
+  if(g('modal-style-halfzip')) g('modal-style-halfzip').value=p.styleHalfZip||'';
   pendingTechs=[...(p.techs||[])];
   g('modal-img-preview').innerHTML=p.img?'<img src="'+p.img+'" /><div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;letter-spacing:0.06em;text-transform:uppercase">Click to change</div>':'<div class="img-preview-placeholder"><span>'+p.emoji+'</span>Click to upload image</div>';
   g('modal-img-preview').style.position='relative';
@@ -2614,6 +2620,9 @@ function editProduct(id) {
   if(g('modal-style-no')) g('modal-style-no').value=p.styleNo||'';
   if(g('modal-style-top')) g('modal-style-top').value=p.styleTop||'';
   if(g('modal-style-bottom')) g('modal-style-bottom').value=p.styleBottom||'';
+  if(g('modal-style-jacket')) g('modal-style-jacket').value=p.styleJacket||'';
+  if(g('modal-style-shirt')) g('modal-style-shirt').value=p.styleShirt||'';
+  if(g('modal-style-halfzip')) g('modal-style-halfzip').value=p.styleHalfZip||'';
   pendingTechs=[...(p.techs||[])];
   g('modal-img-preview').innerHTML=p.img?'<img src="'+p.img+'" />'+'<div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;letter-spacing:0.06em;text-transform:uppercase">Click to change</div>':'<div class="img-preview-placeholder"><span>'+p.emoji+'</span>Click to upload image</div>';
   g('modal-img-preview').style.position='relative';
@@ -3944,6 +3953,9 @@ function buildPdfPageHTML(pair) {
     if (p.styleNo&&p.styleNo.trim()) s+='<span style="font-size:2.8mm;letter-spacing:0.1em;text-transform:uppercase;color:#A0722A">Style No </span><span style="font-size:3.5mm;color:#1C1C1A">'+p.styleNo+'</span>';
     if (p.styleTop&&p.styleTop.trim()) s+='<span style="margin-left:4mm;font-size:2.8mm;letter-spacing:0.1em;text-transform:uppercase;color:#A0722A">Top </span><span style="font-size:3.5mm;color:#1C1C1A">'+p.styleTop+'</span>';
     if (p.styleBottom&&p.styleBottom.trim()) s+='<span style="margin-left:4mm;font-size:2.8mm;letter-spacing:0.1em;text-transform:uppercase;color:#A0722A">Bottom </span><span style="font-size:3.5mm;color:#1C1C1A">'+p.styleBottom+'</span>';
+    if (p.styleShirt&&p.styleShirt.trim()) s+='<span style="margin-left:4mm;font-size:2.8mm;letter-spacing:0.1em;text-transform:uppercase;color:#A0722A">Shirt </span><span style="font-size:3.5mm;color:#1C1C1A">'+p.styleShirt+'</span>';
+    if (p.styleHalfZip&&p.styleHalfZip.trim()) s+='<span style="margin-left:4mm;font-size:2.8mm;letter-spacing:0.1em;text-transform:uppercase;color:#A0722A">Half Zip </span><span style="font-size:3.5mm;color:#1C1C1A">'+p.styleHalfZip+'</span>';
+    if (p.styleJacket&&p.styleJacket.trim()) s+='<span style="margin-left:4mm;font-size:2.8mm;letter-spacing:0.1em;text-transform:uppercase;color:#A0722A">Jacket </span><span style="font-size:3.5mm;color:#1C1C1A">'+p.styleJacket+'</span>';
     return s?'<div style="margin-top:1.5mm">'+s+'</div>':'';
   }
 
