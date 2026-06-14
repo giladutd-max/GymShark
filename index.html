@@ -3169,19 +3169,19 @@ function getClosingFooter() {
   +'</div>';
 }
 
+function cleanTxt(s){
+  if(typeof s!=='string') return (s==null?s:s);
+  return s
+    .replace(/[\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFFFC]/g,' ')
+    .replace(/[\u00AD\u061C\u180E\u200B\u200C\u200D\u200E\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9\uFFFA\uFFFB\uFFFD]/g,'')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g,'')
+    .replace(/ {2,}/g,' ');
+}
 function scrubState(){
   try{
-    var cs=function(s){
-      if(typeof s!=='string') return s;
-      return s
-        .replace(/[\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFFFC]/g,' ')
-        .replace(/[\u200B\u200C\u200D\u200E\u200F\u2060\uFEFF]/g,'')
-        .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g,'')
-        .replace(/ {2,}/g,' ');
-    };
     var prodFields=['name','fabric','machine','desc','special','styleNo','styleTop','styleBottom','styleJacket','styleShirt','styleHalfZip'];
     var techFields=['name','desc','title','label'];
-    var clean=function(o,fields){ if(o&&typeof o==='object'){ fields.forEach(function(k){ if(typeof o[k]==='string') o[k]=cs(o[k]); }); } };
+    var clean=function(o,fields){ if(o&&typeof o==='object'){ fields.forEach(function(k){ if(typeof o[k]==='string') o[k]=cleanTxt(o[k]); }); } };
     ['products','activeProducts'].forEach(function(key){ if(Array.isArray(state[key])) state[key].forEach(function(p){ clean(p,prodFields); }); });
     ['techItems','activeTechItems'].forEach(function(key){ if(Array.isArray(state[key])) state[key].forEach(function(t){ clean(t,techFields); }); });
   }catch(e){}
@@ -3348,14 +3348,14 @@ function openDetail(id, list) {
         <img src="https://dkgzhmpuqzykzebzcqdr.supabase.co/storage/v1/object/public/product-images/DELTA%20LOGO.png" style="width:110px;object-fit:contain;opacity:0.9;margin-bottom:14px;display:block;filter:${isDark?'brightness(0) invert(1)':'none'}" />
         <div class="detail-name" style="color:${textColor}">${p.name}</div>
         <div class="detail-divider" style="background:${accentColor}"></div>
-        ${p.fabric?`<div style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:${accentColor};margin-bottom:2px">Fabric &amp; Material</div><div class="detail-fabric" style="color:${subColor};margin-bottom:8px">${p.fabric}</div>`:""}
-        ${p.machine?`<div style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:${accentColor};margin-bottom:2px">Machine</div><div class="detail-fabric" style="color:${subColor};margin-bottom:8px">${p.machine}</div>`:""}
+        ${p.fabric?`<div style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:${accentColor};margin-bottom:2px">Fabric &amp; Material</div><div class="detail-fabric" style="color:${subColor};margin-bottom:8px">${cleanTxt(p.fabric)}</div>`:""}
+        ${p.machine?`<div style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:${accentColor};margin-bottom:2px">Machine</div><div class="detail-fabric" style="color:${subColor};margin-bottom:8px">${cleanTxt(p.machine)}</div>`:""}
         ${p.warmth?getWarmthHTML(p.warmth,true,false,isDark,'w','Warmth'):""}
         ${p.dry?getWarmthHTML(p.dry,true,false,isDark,'d','Dry rate'):""}
         ${p.breath?getWarmthHTML(p.breath,true,false,isDark,'b','AirFlow'):""}
-        ${p.desc?`<div class="detail-desc" style="color:${subColor};margin-top:12px">${p.desc}</div>`:""}
+        ${p.desc?`<div class="detail-desc" style="color:${subColor};margin-top:12px">${cleanTxt(p.desc)}</div>`:""}
       </div>
-      ${p.special?'<div class="detail-anim" style="animation-delay:0.4s;margin-top:8px;padding-top:16px;border-top:1px solid '+borderColor+'">'+'<div style="font-size:14px;letter-spacing:0.12em;text-transform:uppercase;color:'+accentColor+';margin-bottom:8px">What Makes It Special</div>'+'<div style="font-size:16px;color:'+subColor+';line-height:1.8">'+p.special+'</div>'+'</div>':''}
+      ${p.special?'<div class="detail-anim" style="animation-delay:0.4s;margin-top:8px;padding-top:16px;border-top:1px solid '+borderColor+'">'+'<div style="font-size:14px;letter-spacing:0.12em;text-transform:uppercase;color:'+accentColor+';margin-bottom:8px">What Makes It Special</div>'+'<div style="font-size:16px;color:'+subColor+';line-height:1.8">'+cleanTxt(p.special)+'</div>'+'</div>':''}
       ${(p.techs&&p.techs.length)?'<div class="detail-anim" style="animation-delay:0.55s;margin-top:24px;padding-top:20px;border-top:1px solid '+borderColor+';display:flex;flex-wrap:wrap;gap:8px;align-items:center">'+p.techs.map(tid=>{const t=TECHNOLOGIES.find(x=>x.id===tid);if(!t)return'';return `<span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:${accentColor};border:1px solid ${accentColor}66;border-radius:20px;padding:5px 13px;white-space:nowrap">${t.label}</span>`;}).join('')+'</div>':''}
       ${(p.styleNo||p.styleTop||p.styleBottom||p.styleJacket||p.styleShirt||p.styleHalfZip)?(()=>{
         const styleItems=[];
