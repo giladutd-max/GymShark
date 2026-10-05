@@ -4269,11 +4269,14 @@ function exportPPTX(){
     try{
       var norm=function(s){return (s||'').toLowerCase().replace(/\s+/g,' ').trim();};
       var outdoor=(state.products||[]).filter(function(p){return p&&!p.hidden;});
-      var activeAll=(state.activeProducts||[]).filter(function(p){return p&&!p.hidden;});
+      var keyify=function(s){return (s||'').toLowerCase().replace(/[^a-z0-9]/g,'');};
+      var activeAll=(state.activeProducts||[]).filter(function(p){return p && (p.name||'').trim();});
       var activeWanted=['deeptone','motion court','flow bloom','sheer play','core compression','vent compression'];
       var activeOrdered=[], missing=[];
       activeWanted.forEach(function(w){
-        var m=activeAll.find(function(p){return norm(p.name)===w;}) || activeAll.find(function(p){return norm(p.name).indexOf(w)>=0;});
+        var wk=keyify(w);
+        var m=activeAll.find(function(p){return keyify(p.name)===wk;})
+            || activeAll.find(function(p){var k=keyify(p.name); return k && (k.indexOf(wk)>=0 || wk.indexOf(k)>=0);});
         if(m){ if(activeOrdered.indexOf(m)<0) activeOrdered.push(m); } else { missing.push(w); }
       });
       var all=outdoor.concat(activeOrdered);
