@@ -901,6 +901,7 @@ img { image-rendering: auto; }
         <button class="btn btn-primary" onclick="exportToPDF()" style="width:100%;margin-bottom:8px">Export PDF</button>
         <button class="btn btn-ghost-dark" onclick="previewPDF()" style="width:100%;font-size:11px">Preview</button>
         <button class="btn btn-ghost-dark" onclick="previewA5()" style="width:100%;font-size:11px;margin-top:8px">A5 — Vertical (1 image + text)</button>
+        <button class="btn btn-ghost-dark" onclick="exportPPTX()" style="width:100%;font-size:11px;margin-top:8px">Export PowerPoint (text + images)</button>
       </div>
     </aside>
     <main class="canvas" id="canvas">
@@ -4263,6 +4264,69 @@ function previewA5(){
   imgUrls.forEach(function(u){ toDataURL(u,function(){ pending--; if(pending<=0) show(); }); });
 }
 
+function exportPPTX(){
+  function run(){
+    try{
+      var norm=function(s){return (s||'').toLowerCase().replace(/\s+/g,' ').trim();};
+      var outdoor=(state.products||[]).filter(function(p){return p&&!p.hidden;});
+      var activeAll=(state.activeProducts||[]).filter(function(p){return p&&!p.hidden;});
+      var activeWanted=['deeptone','motion court','flow bloom','sheer play','core compression','vent compression'];
+      var activeOrdered=[], missing=[];
+      activeWanted.forEach(function(w){
+        var m=activeAll.find(function(p){return norm(p.name)===w;}) || activeAll.find(function(p){return norm(p.name).indexOf(w)>=0;});
+        if(m){ if(activeOrdered.indexOf(m)<0) activeOrdered.push(m); } else { missing.push(w); }
+      });
+      var all=outdoor.concat(activeOrdered);
+      if(!all.length){ alert('No products found to export.'); return; }
+      var imgUrls=all.map(function(p){return p.img;}).filter(function(u,i,a){return u&&a.indexOf(u)===i;});
+      var cache={};
+      function build(){
+        var pptx=new PptxGenJS();
+        pptx.defineLayout({name:'W16x9',width:13.33,height:7.5});
+        pptx.layout='W16x9';
+        all.forEach(function(p){
+          var slide=pptx.addSlide();
+          slide.background={color:'FFFFFF'};
+          if(cache[p.img]){ slide.addImage({data:cache[p.img],x:0.4,y:0.4,w:5.2,h:6.7,sizing:{type:'contain',w:5.2,h:6.7}}); }
+          else { slide.addShape(pptx.ShapeType.rect,{x:0.4,y:0.4,w:5.2,h:6.7,fill:{color:'F0ECE6'},line:{color:'DDDDDD',width:0.5}}); slide.addText('(image not loaded)',{x:0.4,y:3.3,w:5.2,h:0.5,align:'center',fontSize:12,color:'999999'}); }
+          var tx=6.0, tw=6.9;
+          slide.addText(cleanTxt(p.name)||'Untitled',{x:tx,y:0.4,w:tw,h:0.9,fontSize:30,bold:true,color:'1C1C1A',fontFace:'Georgia',valign:'top'});
+          var sns=[];
+          [['Style No',p.styleNo],['Top',p.styleTop],['Bottom',p.styleBottom],['Shirt',p.styleShirt],['Half Zip',p.styleHalfZip],['Jacket',p.styleJacket]].forEach(function(s){ if(s[1]&&(''+s[1]).trim()) sns.push(s[0]+' '+(''+s[1]).trim()); });
+          if(sns.length) slide.addText(sns.join('     '),{x:tx,y:1.25,w:tw,h:0.35,fontSize:11,color:'777777',valign:'top'});
+          var runs=[];
+          function sec(label,val){ if(val&&(''+val).trim()){ runs.push({text:label,options:{bold:true,color:'A0722A',fontSize:12,breakLine:true}}); runs.push({text:cleanTxt(''+val),options:{color:'333333',fontSize:14,breakLine:true,paraSpaceAfter:10}}); } }
+          if(p.desc&&(''+p.desc).trim()&&norm(p.desc)!==norm(p.special)) sec('DESCRIPTION',p.desc);
+          sec('WHAT MAKES IT SPECIAL',p.special);
+          sec('FABRIC COMPOSITION',p.fabric);
+          sec('MACHINE',p.machine);
+          var meters=[]; if(p.warmth) meters.push('Warmth '+p.warmth+'/5'); if(p.dry) meters.push('Dry Rate '+p.dry+'/5'); if(p.breath) meters.push('Airflow '+p.breath+'/5');
+          if(meters.length) sec('PERFORMANCE',meters.join('     '));
+          var techLabels=(p.techs||[]).map(function(tid){var t=TECHNOLOGIES.find(function(x){return x.id===tid;});return t?t.label:'';}).filter(Boolean).map(function(l){return l.split(' ').map(function(w){return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();}).join(' ');});
+          if(techLabels.length){ runs.push({text:'TECHNOLOGIES',options:{bold:true,color:'A0722A',fontSize:12,breakLine:true}}); techLabels.forEach(function(l){ runs.push({text:'\u2022  '+l,options:{color:'333333',fontSize:14,breakLine:true}}); }); }
+          if(runs.length) slide.addText(runs,{x:tx,y:1.7,w:tw,h:5.4,valign:'top',fit:'shrink'});
+        });
+        pptx.writeFile({fileName:'DeltaGalil_Products_'+Date.now()+'.pptx'}).then(function(){
+          if(missing.length) alert('Deck downloaded ('+all.length+' slides).\n\nThese Active products were not found by name and were skipped:\n'+missing.join(', '));
+        }).catch(function(e){ alert('PowerPoint export failed: '+e); });
+      }
+      var pending=imgUrls.length;
+      if(!pending){ build(); return; }
+      imgUrls.forEach(function(u){
+        var img=new Image(); img.crossOrigin='anonymous';
+        img.onload=function(){ try{ var c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight; c.getContext('2d').drawImage(img,0,0); cache[u]=c.toDataURL('image/jpeg',0.9); }catch(e){} pending--; if(pending<=0) build(); };
+        img.onerror=function(){ pending--; if(pending<=0) build(); };
+        img.src=u+(u.includes('?')?'&':'?')+'_t='+Date.now();
+      });
+    }catch(e){ alert('Export error: '+e); }
+  }
+  if(window.PptxGenJS){ run(); return; }
+  var s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js';
+  s.onload=run;
+  s.onerror=function(){ alert('Could not load the PowerPoint library (network/CDN blocked).'); };
+  document.head.appendChild(s);
+}
 function showGlobalBack(mode) { /* legacy no-op */ }
 function navPush(fn) {
   _navStack.push(fn);
