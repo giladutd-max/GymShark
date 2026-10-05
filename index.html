@@ -4180,7 +4180,7 @@ function buildA5PairPageHTML(pair, collLabel){
           (it.p.styleNo&&(''+it.p.styleNo).trim()?'<div style="font-size:2.4mm;letter-spacing:0.12em;text-transform:uppercase;color:#777;margin-top:1mm">Style No <span style="color:#1C1C1A">'+it.p.styleNo+'</span></div>':'')+
         '</div>' : '';
       return '<div style="flex:1;display:flex;flex-direction:column;min-width:0">'+
-          '<div style="height:92mm;background:#f0ece6;overflow:hidden;display:flex;align-items:center;justify-content:center">'+(it.img?'<img src="'+it.img+'" style="width:100%;height:100%;object-fit:cover;display:block" />':'<span style="font-size:3mm;color:#b4ab9e;letter-spacing:0.15em;text-transform:uppercase">No image</span>')+'</div>'+
+          '<div style="height:88mm;background:#f0ece6;overflow:hidden;display:flex;align-items:center;justify-content:center">'+(it.img?'<img src="'+it.img+'" style="width:100%;height:100%;object-fit:cover;display:block" />':'<span style="font-size:3mm;color:#b4ab9e;letter-spacing:0.15em;text-transform:uppercase">No image</span>')+'</div>'+
           cap+
         '</div>';
     }).join('')+
@@ -4193,7 +4193,7 @@ function buildA5PairPageHTML(pair, collLabel){
       var filter=active?METER_FILTERS[type][Math.min(n,METER_FILTERS[type].length)-1]:'brightness(0) saturate(0) opacity(0.2)';
       icons+='<img src="'+METER_ICONS[type]+'" style="width:4.2mm;height:4.2mm;object-fit:contain;filter:'+filter+';display:inline-block;vertical-align:middle" />';
     }
-    return '<div style="display:flex;align-items:center;gap:2mm;margin-bottom:1.6mm"><span style="font-size:2.6mm;letter-spacing:0.1em;text-transform:uppercase;color:#777;width:18mm;flex-shrink:0">'+label+'</span><div style="display:flex;gap:1mm">'+icons+'</div></div>';
+    return '<div style="margin-bottom:2.5mm"><div style="font-size:2.5mm;letter-spacing:0.1em;text-transform:uppercase;color:#777;margin-bottom:1mm">'+label+'</div><div style="display:flex;gap:1mm">'+icons+'</div></div>';
   }
   var techs='';
   if(spec.techs&&spec.techs.length){
@@ -4202,16 +4202,21 @@ function buildA5PairPageHTML(pair, collLabel){
   }
   var catTag=(_pdfCollection==='outdoor'&&spec.layer)?'<div style="font-size:2.5mm;letter-spacing:0.15em;text-transform:uppercase;color:#888;border:0.3mm solid #bbb;border-radius:20mm;padding:0.8mm 2.5mm;margin-bottom:2mm;width:fit-content">'+(spec.layer==='base'?'Base Layer':spec.layer==='mid'?'Mid Layer':spec.layer)+'</div>':'';
   var special=cleanTxt(spec.special||spec.desc||'');
-  var body='<div style="padding:4mm 9mm 6mm;flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">'+
+  var hasMeters=(spec.warmth>0||spec.dry>0||spec.breath>0);
+  var metersBox=hasMeters?('<div style="width:40mm;flex-shrink:0;border:0.3mm solid #e0dbd4;border-radius:1.5mm;padding:3mm 3.5mm;align-self:flex-start">'+
+    '<div style="font-size:2.6mm;letter-spacing:0.15em;text-transform:uppercase;color:#A0722A;margin-bottom:2.5mm">Performance</div>'+
+    meterRowA5('w',spec.warmth,'Warmth')+meterRowA5('d',spec.dry,'Dry Rate')+meterRowA5('b',spec.breath,'Airflow')+
+  '</div>'):'';
+  var leftCol='<div style="flex:1;min-width:0;display:flex;flex-direction:column">'+
     catTag+
     (special?'<div style="font-size:2.8mm;letter-spacing:0.15em;text-transform:uppercase;color:#A0722A;margin-bottom:1.5mm">What Makes It Special</div><div style="font-size:3.1mm;line-height:1.5;color:#333;margin-bottom:3mm">'+special+'</div>':'')+
-    '<div style="display:flex;gap:7mm;margin-bottom:3mm">'+
+    '<div style="display:flex;gap:7mm;margin-bottom:3mm;flex-wrap:wrap">'+
       (spec.fabric?'<div><div style="font-size:2.8mm;letter-spacing:0.15em;text-transform:uppercase;color:#A0722A;margin-bottom:1mm">Fabric</div><div style="font-size:3mm;color:#333">'+cleanTxt(spec.fabric)+'</div></div>':'')+
       (spec.machine?'<div><div style="font-size:2.8mm;letter-spacing:0.15em;text-transform:uppercase;color:#A0722A;margin-bottom:1mm">Machine</div><div style="font-size:3mm;color:#333">'+cleanTxt(spec.machine)+'</div></div>':'')+
     '</div>'+
-    '<div style="margin-bottom:3mm">'+meterRowA5('w',spec.warmth,'Warmth')+meterRowA5('d',spec.dry,'Dry Rate')+meterRowA5('b',spec.breath,'Airflow')+'</div>'+
     techs+
   '</div>';
+  var body='<div style="padding:4mm 9mm 6mm;flex:1;display:flex;gap:6mm;min-height:0;overflow:hidden">'+leftCol+metersBox+'</div>';
 
   var header='<div style="display:flex;align-items:center;justify-content:space-between;padding:5mm 9mm 3mm;flex-shrink:0">'+
     '<img src="https://dkgzhmpuqzykzebzcqdr.supabase.co/storage/v1/object/public/product-images/DELTA%20LOGO2.png" style="height:12mm;object-fit:contain" />'+
