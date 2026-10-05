@@ -531,6 +531,7 @@ img { image-rendering: auto; }
 #pdf-print-root.visible{display:block}
 .pdf-page{margin:0 auto 20px;box-shadow:0 2px 20px rgba(0,0,0,0.12)}
 .a5-page{margin:0 auto 20px;box-shadow:0 2px 20px rgba(0,0,0,0.12)}
+.a5-sheet{display:contents}
 @media print{
   body>*:not(#pdf-print-root){display:none!important}
   #pdf-print-root{display:block!important;position:static;overflow:visible;padding:0;background:#fff}
@@ -538,8 +539,9 @@ img { image-rendering: auto; }
   #pdf-pages-wrapper{display:block!important;margin:0!important;padding:0!important}
   .pdf-page{margin:0;padding:0;box-shadow:none;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;width:297mm!important;height:210mm!important}
   .pdf-page:last-child{page-break-after:avoid;break-after:avoid}
-  .a5-page{margin:0;padding:0;box-shadow:none;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;width:148mm!important;height:210mm!important}
-  .a5-page:last-child{page-break-after:avoid;break-after:avoid}
+  .a5-sheet{display:flex!important;align-items:center;justify-content:center;width:210mm;height:297mm;margin:0;padding:0;page-break-after:always;break-after:page;overflow:hidden}
+  .a5-sheet:last-child{page-break-after:avoid;break-after:avoid}
+  .a5-page{margin:0!important;padding:0;box-shadow:none!important;break-inside:avoid;width:148mm!important;height:210mm!important}
   @page{size:A4 landscape;margin:0}
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
@@ -4198,12 +4200,12 @@ function buildA5PairPageHTML(pair, collLabel){
   var techs='';
   if(spec.techs&&spec.techs.length){
     var labels=spec.techs.map(function(tid){var t=TECHNOLOGIES.find(function(x){return x.id===tid;});return t?t.label:'';}).filter(Boolean);
-    if(labels.length) techs='<div style="font-size:2.8mm;letter-spacing:0.15em;text-transform:uppercase;color:#A0722A;margin-bottom:1.5mm">Technologies</div>'+labels.map(function(l,i){return '<div style="font-size:3mm;color:#444;padding:0.8mm 0;'+(i>0?'border-top:0.3mm solid #e0dbd4':'')+'">'+l.split(' ').map(function(w){return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();}).join(' ')+'</div>';}).join('');
+    if(labels.length) techs='<div style="font-size:2.8mm;letter-spacing:0.15em;text-transform:uppercase;color:#A0722A;margin-bottom:1.5mm">Technologies</div>'+labels.map(function(l){return '<div style="font-size:3mm;color:#444;padding:0.5mm 0;display:flex;gap:1.6mm"><span style="color:#A0722A">&#8226;</span><span>'+l.split(' ').map(function(w){return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();}).join(' ')+'</span></div>';}).join('');
   }
   var catTag=(_pdfCollection==='outdoor'&&spec.layer)?'<div style="font-size:2.5mm;letter-spacing:0.15em;text-transform:uppercase;color:#888;border:0.3mm solid #bbb;border-radius:20mm;padding:0.8mm 2.5mm;margin-bottom:2mm;width:fit-content">'+(spec.layer==='base'?'Base Layer':spec.layer==='mid'?'Mid Layer':spec.layer)+'</div>':'';
   var special=cleanTxt(spec.special||spec.desc||'');
   var hasMeters=(spec.warmth>0||spec.dry>0||spec.breath>0);
-  var metersBox=hasMeters?('<div style="width:40mm;flex-shrink:0;border:0.3mm solid #e0dbd4;border-radius:1.5mm;padding:3mm 3.5mm;align-self:flex-start">'+
+  var metersBox=hasMeters?('<div style="width:38mm;flex-shrink:0;align-self:flex-start">'+
     '<div style="font-size:2.6mm;letter-spacing:0.15em;text-transform:uppercase;color:#A0722A;margin-bottom:2.5mm">Performance</div>'+
     meterRowA5('w',spec.warmth,'Warmth')+meterRowA5('d',spec.dry,'Dry Rate')+meterRowA5('b',spec.breath,'Airflow')+
   '</div>'):'';
@@ -4224,7 +4226,7 @@ function buildA5PairPageHTML(pair, collLabel){
     '<img src="https://dkgzhmpuqzykzebzcqdr.supabase.co/storage/v1/object/public/product-images/gymshark-logo.png" style="height:4mm;object-fit:contain" />'+
   '</div>';
 
-  return '<div class="a5-page" style="width:148mm;height:210mm;background:#fff;display:flex;flex-direction:column;font-family:DM Sans,sans-serif;box-sizing:border-box;overflow:hidden">'+header+imgsRow+body+'</div>';
+  return '<div class="a5-sheet"><div class="a5-page" style="width:148mm;height:210mm;background:#fff;display:flex;flex-direction:column;font-family:DM Sans,sans-serif;box-sizing:border-box;overflow:hidden;border:0.35mm solid #999">'+header+imgsRow+body+'</div></div>';
 }
 function previewA5(){
   var root=document.getElementById('pdf-print-root');
@@ -4243,7 +4245,7 @@ function previewA5(){
     img.src=url+(url.includes('?')?'&':'?')+'_t='+Date.now();
   }
   function show(){
-    var _ps=document.getElementById('pdf-page-size'); if(_ps) _ps.textContent='@media print{@page{size:A5 portrait;margin:0}}';
+    var _ps=document.getElementById('pdf-page-size'); if(_ps) _ps.textContent='@media print{@page{size:A4 portrait;margin:0}}';
     root.innerHTML=
       '<div id="pdf-controls" style="position:fixed;top:0;left:0;right:0;height:52px;background:#1C1C1A;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,0.3)">'+
         '<button onclick="closePdfPreview()" style="display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.6);font-family:DM Sans,sans-serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase"><span style="font-size:16px">\u2190</span> Back to Builder</button>'+
